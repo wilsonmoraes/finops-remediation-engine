@@ -23,6 +23,7 @@ dev = [
     "ruff>=0.6",
     "black>=24.4",
     "pyright>=1.1.370",
+    "reportlab>=4.2",
 ]
 
 [tool.setuptools.packages.find]
