@@ -14,9 +14,22 @@ from app.detectors.engine import detect
 from app.detectors.rules import RuleConfig
 from app.modules.ingest.schemas import IngestSummary
 from app.providers import get_provider
+from app.providers.base import Resource
 from app.repos import findings as findings_repo
 from app.repos import ingest_runs
 from app.repos import resources as resources_repo
+
+
+def _resource_key(resource: Resource) -> tuple[str, str, str, str, str]:
+    """Stable identity of a resource within one export."""
+
+    return (
+        resource.provider,
+        resource.account_id,
+        resource.region,
+        resource.resource_type,
+        resource.resource_id,
+    )
 
 
 def run_ingest(filename: str, content: bytes, provider_name: str) -> IngestSummary:
@@ -34,13 +47,13 @@ def run_ingest(filename: str, content: bytes, provider_name: str) -> IngestSumma
     detected = detect(parsed, provider, cfg)
 
     run_id = ingest_runs.insert(filename, provider_name)
-    row_id_by_resource: dict[int, int] = {}
+    row_id_by_key: dict[tuple[str, str, str, str, str], int] = {}
     for resource in parsed:
-        row_id_by_resource[id(resource)] = resources_repo.insert(run_id, resource)
+        row_id_by_key[_resource_key(resource)] = resources_repo.insert(run_id, resource)
 
     total_waste = 0.0
     for finding in detected:
-        findings_repo.insert(run_id, row_id_by_resource[id(finding.resource)], finding)
+        findings_repo.insert(run_id, row_id_by_key[_resource_key(finding.resource)], finding)
         total_waste += finding.monthly_waste
 
     ingest_runs.finalize(run_id, len(parsed), len(detected), round(total_waste, 2))

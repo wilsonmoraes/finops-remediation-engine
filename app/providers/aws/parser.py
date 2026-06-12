@@ -75,7 +75,10 @@ def _collect_csv_tags(row: dict[str, str]) -> dict[str, Any]:
         else:
             flat[key] = value
     if "tags" in flat and isinstance(flat["tags"], str) and flat["tags"].strip():
-        flat_tags = json.loads(flat["tags"])
+        try:
+            flat_tags = json.loads(flat["tags"])
+        except json.JSONDecodeError as exc:
+            raise ExportParseError(f"invalid 'tags' JSON in CSV row: {exc}") from exc
         if isinstance(flat_tags, dict):
             tags.update({str(k): str(v) for k, v in flat_tags.items()})
     flat["tags"] = tags
@@ -112,7 +115,10 @@ def _row_to_resource(row: dict[str, Any]) -> Resource:
 def _to_float(value: Any) -> float:
     if value in (None, ""):
         return 0.0
-    return float(value)
+    try:
+        return float(value)
+    except (ValueError, TypeError) as exc:
+        raise ExportParseError(f"non-numeric monthly_cost: {value!r}") from exc
 
 
 def _to_bool(value: Any) -> bool:

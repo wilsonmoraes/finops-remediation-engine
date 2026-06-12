@@ -48,6 +48,20 @@ def test_parse_rejects_row_without_resource_id() -> None:
         parser.parse("x.json", b'[{"resource_type": "ebs_volume"}]')
 
 
+def test_parse_csv_rejects_malformed_tags_json() -> None:
+    csv_bytes = b"resource_type,resource_id,tags\n" b'ebs_volume,vol-1,"{not valid json}"\n'
+    with pytest.raises(ExportParseError):
+        parser.parse("x.csv", csv_bytes)
+
+
+def test_parse_rejects_non_numeric_cost() -> None:
+    with pytest.raises(ExportParseError):
+        parser.parse(
+            "x.json",
+            b'[{"resource_type": "ebs_volume", "resource_id": "vol-1", "monthly_cost": "free"}]',
+        )
+
+
 def test_parse_json_accepts_bare_list() -> None:
     resources = parser.parse(
         "x.json",
