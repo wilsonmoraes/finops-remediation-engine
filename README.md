@@ -51,6 +51,22 @@ curl http://localhost:8000/findings
 curl http://localhost:8000/findings/1/command.txt
 ```
 
+## Run against a live AWS account (read-only, optional)
+
+The engine itself is file-based and needs no cloud credentials. To scan a real account, an
+**optional** read-only collector turns a live inventory into an export the engine ingests:
+
+```bash
+aws sts get-caller-identity                                   # confirm the target account
+python scripts/collect_aws_inventory.py --regions us-east-1   # or omit --regions for all enabled
+curl -F "file=@data/aws_live_inventory.json" http://localhost:8000/ingest
+```
+
+`collect_aws_inventory.py` runs only `aws ... describe-*` calls — it never mutates or deletes
+anything. Costs are best-effort estimates (no Cost-and-Usage-Report). Output lands in `data/`
+(gitignored), so live account data never enters the repo. Scope: EC2-family (EBS, EC2, Elastic
+IP, snapshots) plus ELBv2 — not Lambda/RDS/S3/CloudFront.
+
 ## API
 
 | Method | Path | Purpose |
