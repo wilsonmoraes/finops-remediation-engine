@@ -37,3 +37,22 @@ Clarifying answers given by the architect:
 - Dashboard: **server-rendered HTMX + Jinja2** (one FastAPI service, zero node build).
 - `.claude` rules: **adapt to FinOps** (keep meta-pattern, rewrite tenant/partner rules).
 - Repo name: **finops-remediation-engine** (public, on the architect's GitHub).
+
+### Agent execution (turn 1, autonomous build)
+
+The agent then built the MVP end to end from the directives above, with no manual edits by the
+architect:
+
+1. Ported the `.claude` governance from the reference standard, adapted to FinOps: golden-rule
+   pre-commit floor, path-scoped rules (python-conventions, layering, schema-canonical,
+   remediation-safety, remediation-determinism, provider-neutral), auditor agents, git-gate hooks.
+2. Built the pure core: normalized `Resource` shape, AWS parser (JSON + CSV), deterministic
+   `build_*` decommission-command builders, five detection rules + engine.
+3. Built the API + persistence: SQLite schema (`db/init_db.sql`), repos, and the ingest /
+   findings / remediation modules (router/schemas/service split).
+4. Built the server-rendered dashboard (HTMX + Jinja + Chart.js): waste KPIs, risk score,
+   waste-by-rule chart, findings table with copy-command buttons.
+5. Greened the floor: strict gate, layering gate, docs-language gate, ruff, black,
+   pyright (strict, 0 errors), and 25 passing tests. Verified end to end against the running
+   server (JSON + CSV ingest, summary, command output, dashboard render).
+6. Published the public repository via `gh`.
