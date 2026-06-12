@@ -1,0 +1,103 @@
+{
+  "resources": [
+    {
+      "resource_type": "ebs_volume",
+      "resource_id": "vol-0a1unattached",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "available",
+      "attached": false,
+      "monthly_cost": 8.0,
+      "last_activity_at": "2026-03-01",
+      "tags": {"Name": "old-build-cache", "Env": "staging"}
+    },
+    {
+      "resource_type": "ebs_volume",
+      "resource_id": "vol-0b2inuse",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "in-use",
+      "attached": true,
+      "monthly_cost": 10.0,
+      "last_activity_at": "2026-06-11",
+      "tags": {"Name": "app-data"}
+    },
+    {
+      "resource_type": "ec2_instance",
+      "resource_id": "i-0c3stopped",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "stopped",
+      "attached": false,
+      "monthly_cost": 32.0,
+      "last_activity_at": "2026-02-20",
+      "tags": {"Name": "demo-box", "Owner": "qa"}
+    },
+    {
+      "resource_type": "ec2_instance",
+      "resource_id": "i-0d4idlerunning",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "running",
+      "attached": true,
+      "monthly_cost": 58.4,
+      "last_activity_at": "2026-01-05",
+      "tags": {"Name": "forgotten-worker"}
+    },
+    {
+      "resource_type": "ec2_instance",
+      "resource_id": "i-0e5active",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "running",
+      "attached": true,
+      "monthly_cost": 58.4,
+      "last_activity_at": "2026-06-11",
+      "tags": {"Name": "prod-api"}
+    },
+    {
+      "resource_type": "elastic_ip",
+      "resource_id": "eipalloc-0f6loose",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "unassociated",
+      "attached": false,
+      "monthly_cost": 3.6,
+      "last_activity_at": "2026-04-10",
+      "tags": {"Name": "leftover-ip"}
+    },
+    {
+      "resource_type": "load_balancer",
+      "resource_id": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/dead-alb/abc123",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "active",
+      "attached": false,
+      "monthly_cost": 18.5,
+      "last_activity_at": "2026-05-01",
+      "tags": {"Name": "dead-alb"}
+    },
+    {
+      "resource_type": "snapshot",
+      "resource_id": "snap-0g7stale",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "completed",
+      "attached": false,
+      "monthly_cost": 5.25,
+      "last_activity_at": "2025-01-15",
+      "tags": {"Name": "ancient-backup"}
+    },
+    {
+      "resource_type": "snapshot",
+      "resource_id": "snap-0h8recent",
+      "region": "us-east-1",
+      "account_id": "123456789012",
+      "state": "completed",
+      "attached": false,
+      "monthly_cost": 5.25,
+      "last_activity_at": "2026-06-10",
+      "tags": {"Name": "nightly-backup"}
+    }
+  ]
+}

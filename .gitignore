@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local DB
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# Claude Code local state
+.claude/state/
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

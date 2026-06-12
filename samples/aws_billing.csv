@@ -1,0 +1,4 @@
+resource_type,resource_id,region,account_id,state,attached,monthly_cost,last_activity_at,tag:Name,tag:Env
+ebs_volume,vol-csv01orphan,us-west-2,123456789012,available,false,12.50,2026-02-15,orphan-disk,dev
+elastic_ip,eipalloc-csv02loose,us-west-2,123456789012,unassociated,false,3.60,2026-04-01,old-ip,dev
+ec2_instance,i-csv03active,us-west-2,123456789012,running,true,44.00,2026-06-11,build-runner,ci

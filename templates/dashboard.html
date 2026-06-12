@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinOps Remediation Engine</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>FinOps Remediation Engine</h1>
+      <div class="sub">Orphaned-resource detection &amp; decommission commands &middot; AWS</div>
+    </div>
+    <div><a href="/docs">API docs &rarr;</a></div>
+  </header>
+
+  <main>
+    <section class="kpis">
+      <div class="kpi">
+        <div class="label">Monthly waste</div>
+        <div class="value money">${{ "%.2f"|format(summary.monthly_waste) }}</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Annualized</div>
+        <div class="value money">${{ "%.2f"|format(summary.annual_waste) }}</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Findings</div>
+        <div class="value">{{ summary.finding_count }}</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Risk score</div>
+        <div class="risk {{ risk_band }}">
+          <span class="risk-dot"></span>
+          <span class="value">{{ summary.risk_score }}<span style="font-size:14px;color:var(--muted)">/100</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="panel">
+        <h2>Waste by rule</h2>
+        <canvas id="ruleChart" height="150"></canvas>
+      </div>
+      <div class="panel">
+        <h2>Upload an export</h2>
+        <form class="upload" action="/upload" method="post" enctype="multipart/form-data">
+          <input type="file" name="file" accept=".json,.csv" required>
+          <input type="hidden" name="provider" value="aws">
+          <button class="btn" type="submit">Scan</button>
+        </form>
+        <p class="hint">Accepts an AWS inventory JSON or billing CSV. Try the bundled
+          <code style="color:var(--accent)">samples/aws_inventory.json</code>.</p>
+        <h2 style="margin-top:22px">Severity</h2>
+        <table>
+          <tbody>
+            {% for row in severity_rows %}
+            <tr>
+              <td><span class="badge {{ row.severity }}">{{ row.severity }}</span></td>
+              <td>{{ row.count }} finding(s)</td>
+              <td class="money">${{ "%.2f"|format(row.waste) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Findings &amp; remediation</h2>
+      <div id="findings">
+        {% include "_findings_table.html" %}
+      </div>
+    </section>
+
+    <p class="safe-note">
+      Safety: this engine only generates commands. It never connects to a cloud account or
+      executes a deletion. Review each command, then run it yourself in an authenticated shell.
+    </p>
+  </main>
+
+  <script>
+    function copyCmd(id) {
+      const el = document.getElementById(id);
+      navigator.clipboard.writeText(el.innerText).then(() => {
+        const btn = el.nextElementSibling;
+        const prev = btn.innerText;
+        btn.innerText = "Copied";
+        setTimeout(() => { btn.innerText = prev; }, 1200);
+      });
+    }
+
+    const ruleData = {{ rule_rows | map(attribute="rule") | list | tojson }};
+    const ruleWaste = {{ rule_rows | map(attribute="waste") | list | tojson }};
+    if (ruleData.length) {
+      new Chart(document.getElementById("ruleChart"), {
+        type: "bar",
+        data: {
+          labels: ruleData,
+          datasets: [{
+            label: "Monthly waste (USD)",
+            data: ruleWaste,
+            backgroundColor: "#4f8cff",
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#94a3c4" }, grid: { display: false } },
+            y: { ticks: { color: "#94a3c4" }, grid: { color: "#27314f" } },
+          },
+        },
+      });
+    }
+  </script>
+</body>
+</html>
